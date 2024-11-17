@@ -6,9 +6,16 @@ public class Program
     public static void Main()
     {
         // Лабораторная работа №1 : Архиваторы
-        ArchiverLab.ArchiverLab.Execute();
+        // ArchiverLab.ArchiverLab.Execute();
+        
+        
+        
+        // Лабораторная работа №3 : QR и штрих код
+        QrCodeLab.QrCodeLab.Execute();
         
         // Лабораторная работа №4 : Криптография
-        CryptographyLab.CryptographyLab.Execute();
+        // CryptographyLab.CryptographyLab.Execute();
+        
+        
     }
 }
