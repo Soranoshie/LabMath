@@ -11,8 +11,8 @@ public class SecondTask
         // Для 18 кодовых комбинаций нам потребуется k=5 информационных битов
         // (так как 2^5=32>18), и соответственно r=5 контрольных битов
         // (для 32 комбинаций с 1 битом на проверку ошибок).
-        int[] hammingData = { 1, 0, 1, 1, 1 };
-        int[] hammingCodeword = GenerateHammingCode(hammingData);
+        int[] hammingData = [1, 0, 1, 1, 1];
+        var hammingCodeword = GenerateHammingCode(hammingData);
 
         Console.WriteLine("Код Хэмминга: " + string.Join("", hammingCodeword));
         CheckAndCorrectHammingCode(hammingCodeword);
@@ -24,46 +24,42 @@ public class SecondTask
         Console.WriteLine("Исправленный код Хэмминга: " + string.Join("", hammingCodeword));
     }
 
-    static int[] GenerateHammingCode(int[] data)
+    private static int[] GenerateHammingCode(int[] data)
     {
-        int m = data.Length;
-        int r = 0;
+        var infoBitsCount = data.Length;
+        var verificationBitsCount = 0;
+        
+        while (Math.Pow(2, verificationBitsCount) < (infoBitsCount + verificationBitsCount + 1))
+            verificationBitsCount++;
 
-        while (Math.Pow(2, r) < (m + r + 1))
+        var codeword = new int[infoBitsCount + verificationBitsCount];
+        var infoBitsCounter = 0;
+        var verificationBitsCounter = 0;
+
+        // Расставляем информационные биты и места для проверочных битов
+        for (var i = 1; i <= codeword.Length; i++)
         {
-            r++;
-        }
-
-        int[] codeword = new int[m + r];
-        int p = 0;
-        int o = 0;
-
-        for (int i = 1; i <= codeword.Length; i++)
-        {
-            if (Math.Pow(2, p) == i)
+            if (Math.Abs(Math.Pow(2, infoBitsCounter) - i) < 1E-6)
             {
                 codeword[i - 1] = 0;
-                p++;
+                infoBitsCounter++;
             }
             else
             {
-                codeword[i - 1] = data[o];
-                o++;
+                codeword[i - 1] = data[verificationBitsCounter];
+                verificationBitsCounter++;
             }
         }
 
-        for (int i = 0; i < r; i++)
+        // Вычисляем проверочные биты
+        for (var i = 0; i < verificationBitsCount; i++)
         {
-            int parityPosition = (int)Math.Pow(2, i);
-            int parity = 0;
+            var parityPosition = (int)Math.Pow(2, i);
+            var parity = 0;
 
-            for (int j = parityPosition - 1; j < codeword.Length; j += 2 * parityPosition)
-            {
-                for (int k = 0; k < parityPosition && j + k < codeword.Length; k++)
-                {
+            for (var j = parityPosition - 1; j < codeword.Length; j += 2 * parityPosition)
+                for (var k = 0; k < parityPosition && j + k < codeword.Length; k++)
                     parity ^= codeword[j + k];
-                }
-            }
 
             codeword[parityPosition - 1] = parity;
         }
@@ -71,33 +67,26 @@ public class SecondTask
         return codeword;
     }
 
-    static void CheckAndCorrectHammingCode(int[] codeword)
+    private static void CheckAndCorrectHammingCode(int[] codeword)
     {
-        int r = 0;
-        while (Math.Pow(2, r) < codeword.Length)
+        var verificationBitsTotalCount = 0;
+        while (Math.Pow(2, verificationBitsTotalCount) < codeword.Length)
+            verificationBitsTotalCount++;
+
+        var errorPosition = 0;
+
+        // Вычисляем синдром
+        for (var i = 0; i < verificationBitsTotalCount; i++)
         {
-            r++;
-        }
+            var parityPosition = (int)Math.Pow(2, i);
+            var parity = 0;
 
-        int errorPosition = 0;
-
-        for (int i = 0; i < r; i++)
-        {
-            int parityPosition = (int)Math.Pow(2, i);
-            int parity = 0;
-
-            for (int j = parityPosition - 1; j < codeword.Length; j += 2 * parityPosition)
-            {
-                for (int k = 0; k < parityPosition && j + k < codeword.Length; k++)
-                {
+            for (var j = parityPosition - 1; j < codeword.Length; j += 2 * parityPosition)
+                for (var k = 0; k < parityPosition && j + k < codeword.Length; k++)
                     parity ^= codeword[j + k];
-                }
-            }
 
             if (parity != 0)
-            {
                 errorPosition += parityPosition;
-            }
         }
 
         if (errorPosition != 0)
@@ -106,8 +95,6 @@ public class SecondTask
             codeword[errorPosition - 1] ^= 1;
         }
         else
-        {
             Console.WriteLine("Кодовая комбинация принята без ошибок.");
-        }
     }
 }
