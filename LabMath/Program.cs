@@ -8,10 +8,11 @@ public class Program
         // Лабораторная работа №1 : Архиваторы
         // ArchiverLab.ArchiverLab.Execute();
         
-        
+        // Лабораторная работа №2 : Помехоустойчивое кодирование
+        NoiseProofCoding.NoiseProofCoding.Execute();
         
         // Лабораторная работа №3 : QR и штрих код
-        QrCodeLab.QrCodeLab.Execute();
+        // QrCodeLab.QrCodeLab.Execute();
         
         // Лабораторная работа №4 : Криптография
         // CryptographyLab.CryptographyLab.Execute();
